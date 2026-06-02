@@ -130,10 +130,8 @@ const ProductDetailPage = () => {
   const toggleWishlist = async () => {
     if (isInWishlist(product._id)) {
       await removeFromWishlist(product._id);
-      toast.success('Removed from wishlist');
     } else {
       await addToWishlist(product._id);
-      toast.success('Added to wishlist');
     }
   };
 

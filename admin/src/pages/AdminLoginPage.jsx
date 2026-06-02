@@ -4,6 +4,8 @@ import axios from '../api/axios';
 import * as authApi from '../api/auth.api';
 import { toast } from 'react-hot-toast';
 import { Mail, Lock, KeyRound, Eye, EyeOff } from 'lucide-react';
+import { useContext } from 'react';
+import { AdminAuthContext } from '../context/AdminAuthContext';
 
 const AdminLoginPage = () => {
   const [view, setView] = useState('login'); // 'login', 'forgot', 'reset_otp', 'reset_password'
@@ -18,21 +20,18 @@ const AdminLoginPage = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
+  const { login } = useContext(AdminAuthContext);
+
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
     
     try {
-      const { data } = await axios.post('/auth/login', { email, password, appType: 'admin' });
-      if (data.success) {
-        localStorage.setItem('adminToken', data.token); // Store token if needed
-        toast.success('Successfully logged in as Admin!');
-        setTimeout(() => {
-          window.location.href = '/'; 
-        }, 1000);
-      }
+      await login({ email, password, appType: 'admin' });
+      toast.success('Successfully logged in as Admin!');
+      navigate('/');
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Login failed. Invalid credentials.');
+      toast.error(err.message || 'Login failed. Invalid credentials.');
     } finally {
       setLoading(false);
     }

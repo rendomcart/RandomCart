@@ -53,6 +53,7 @@ export const WishlistProvider = ({ children }) => {
       const { data } = await wishlistApi.addToWishlist({ productId });
       if (data.success) {
         dispatch({ type: 'SET_WISHLIST', payload: data.data });
+        toast.success('Added to wishlist');
         return { success: true };
       }
     } catch (error) {
@@ -68,6 +69,7 @@ export const WishlistProvider = ({ children }) => {
       const { data } = await wishlistApi.removeFromWishlist(productId);
       if (data.success) {
         dispatch({ type: 'SET_WISHLIST', payload: data.data });
+        toast.success('Removed from wishlist');
       }
     } catch (error) {
       console.error(error);
