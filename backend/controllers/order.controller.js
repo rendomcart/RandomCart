@@ -449,27 +449,13 @@ export const downloadInvoice = async (req, res, next) => {
     const templatePath = path.join(__dirname, '../templates/invoice.ejs');
     const html = await ejs.renderFile(templatePath, { order, formatImgUrl });
 
-    // Generate PDF using Puppeteer
-    const browser = await puppeteer.launch({ 
-      headless: true,
-      args: ['--no-sandbox', '--disable-setuid-sandbox'] 
-    });
-    const page = await browser.newPage();
-    await page.setContent(html, { waitUntil: 'networkidle0' });
+    // Send HTML instead of PDF to avoid Puppeteer dependency issues on Render
+    res.setHeader('Content-Type', 'text/html');
     
-    const pdfBuffer = await page.pdf({
-      format: 'A4',
-      printBackground: true,
-      margin: { top: '0px', right: '0px', bottom: '0px', left: '0px' }
-    });
-
-    await browser.close();
-
-    // Send PDF as a download
-    res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', `inline; filename=Invoice-${order.invoiceNumber}.pdf`);
-    res.setHeader('Content-Length', pdfBuffer.length);
-    res.send(Buffer.from(pdfBuffer));
+    // Inject a small script to automatically trigger the print dialog
+    const htmlWithPrint = html.replace('</body>', '<script>window.onload = function() { window.print(); }</script></body>');
+    
+    res.send(htmlWithPrint);
 
   } catch (error) {
     try {

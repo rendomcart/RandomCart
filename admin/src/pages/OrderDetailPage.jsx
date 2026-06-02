@@ -65,7 +65,7 @@ const OrderDetailPage = () => {
       setDownloadingInvoice(true);
       const response = await adminApi.downloadInvoice(order._id);
       
-      const url = window.URL.createObjectURL(new Blob([response.data], { type: 'application/pdf' }));
+      const url = window.URL.createObjectURL(new Blob([response.data], { type: 'text/html' }));
       window.open(url, '_blank');
       setTimeout(() => window.URL.revokeObjectURL(url), 1000);
     } catch (error) {

@@ -35,7 +35,7 @@ const OrdersPage = () => {
       setDownloadingInvoiceId(orderId);
       const response = await orderApi.downloadInvoice(orderId);
       
-      const url = window.URL.createObjectURL(new Blob([response.data], { type: 'application/pdf' }));
+      const url = window.URL.createObjectURL(new Blob([response.data], { type: 'text/html' }));
       window.open(url, '_blank');
       // Revoke the object URL after a short delay to free up memory
       setTimeout(() => window.URL.revokeObjectURL(url), 1000);
