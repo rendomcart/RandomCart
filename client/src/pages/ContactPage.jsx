@@ -49,7 +49,7 @@ const ContactPage = () => {
           <div className="space-y-6">
             <div>
               <h3 className="font-semibold text-gray-800 mb-1">Email</h3>
-              <p className="text-gray-600 text-sm">randomcart@gmail.com</p>
+              <p className="text-gray-600 text-sm">rendomcart@gmail.com</p>
             </div>
             
             <div>
