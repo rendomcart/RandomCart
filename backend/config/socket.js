@@ -6,7 +6,12 @@ let io;
 export const initializeSocket = (httpServer) => {
   io = new Server(httpServer, {
     cors: {
-      origin: [process.env.CLIENT_URL, process.env.ADMIN_URL],
+      origin: [
+        process.env.CLIENT_URL, 
+        process.env.ADMIN_URL,
+        'https://randomcart-shop.netlify.app',
+        'https://randomcart-admin.netlify.app'
+      ],
       methods: ['GET', 'POST'],
       credentials: true,
     },

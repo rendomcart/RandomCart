@@ -51,7 +51,12 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(
   cors({
-    origin: [process.env.CLIENT_URL, process.env.ADMIN_URL],
+    origin: [
+      process.env.CLIENT_URL, 
+      process.env.ADMIN_URL,
+      'https://randomcart-shop.netlify.app',
+      'https://randomcart-admin.netlify.app'
+    ],
     credentials: true,
   })
 );
