@@ -59,7 +59,7 @@ const DeliveryTracker = ({ order }) => {
   return (
     <div className="bg-white border rounded-lg overflow-hidden shadow-sm">
       {/* Header Info */}
-      <div className="bg-gray-50 p-4 border-b flex flex-col md:flex-row justify-between items-center gap-4">
+      <div className="bg-gray-50 p-4 border-b flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <span className="text-xs text-gray-500 font-bold uppercase tracking-wider block mb-1">Delivery Method</span>
           <div className="flex items-center gap-2">
@@ -124,7 +124,7 @@ const DeliveryTracker = ({ order }) => {
               const isActualDate = (status === 'Shipped' && actualShipDate) || (status === 'Delivered' && actualDeliveryDate) || (status !== 'Shipped' && status !== 'Delivered' && event);
 
               return (
-                <div key={status} className="flex flex-col items-center w-16 sm:w-24 relative z-10">
+                <div key={status} className="flex flex-col items-center flex-1 relative z-10 px-1">
                   <div 
                     className={`w-6 h-6 sm:w-8 sm:h-8 text-xs sm:text-base rounded-full flex items-center justify-center font-bold mb-1 sm:mb-2 transition-colors border-2 ${
                       isCompleted 

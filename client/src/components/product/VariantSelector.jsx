@@ -4,13 +4,14 @@ const VariantSelector = ({ variants, selectedVariant, onSelect }) => {
   // Extract unique colors and sizes
   const colors = [...new Map(variants.filter(v => v.color).map(v => [v.color, v])).values()];
   
-  // Get available sizes based on selected color
+  // Get ALL unique sizes across all variants so the UI doesn't jump
+  const allUniqueSizes = [...new Set(variants.filter(v => v.size).map(v => v.size))];
+  
+  // Get available sizes based on selected color to know which ones to disable
   const selectedColor = selectedVariant?.color;
   const availableSizesForColor = selectedColor 
-    ? variants.filter(v => v.color === selectedColor && v.size).map(v => v.size)
-    : variants.filter(v => v.size).map(v => v.size);
-    
-  const uniqueSizes = [...new Set(availableSizesForColor)];
+    ? variants.filter(v => v.color === selectedColor && v.size && v.stock > 0).map(v => v.size)
+    : variants.filter(v => v.size && v.stock > 0).map(v => v.size);
 
   // Handle color click
   const handleColorClick = (colorVariant) => {
@@ -62,19 +63,31 @@ const VariantSelector = ({ variants, selectedVariant, onSelect }) => {
         </div>
       )}
 
-      {uniqueSizes.length > 0 && (
+      {allUniqueSizes.length > 0 && (
         <div>
           <span className="block text-sm font-medium mb-2">Size: <span className="font-semibold">{selectedVariant?.size || 'Select'}</span></span>
           <div className="flex flex-wrap gap-2">
-            {uniqueSizes.map(size => (
-              <button
-                key={`size-${size}`}
-                onClick={() => handleSizeClick(size)}
-                className={`min-w-[40px] px-3 py-1 text-sm border rounded ${selectedVariant?.size === size ? 'border-accent bg-blue-50 text-accent font-medium' : 'border-gray-300 hover:border-gray-400'}`}
-              >
-                {size}
-              </button>
-            ))}
+            {allUniqueSizes.map(size => {
+              const isAvailable = availableSizesForColor.includes(size);
+              const isSelected = selectedVariant?.size === size;
+              
+              return (
+                <button
+                  key={`size-${size}`}
+                  onClick={() => isAvailable && handleSizeClick(size)}
+                  disabled={!isAvailable}
+                  className={`min-w-[40px] px-3 py-1 text-sm border rounded transition-colors ${
+                    isSelected 
+                      ? 'border-accent bg-blue-50 text-accent font-medium' 
+                      : isAvailable 
+                        ? 'border-gray-300 hover:border-gray-400 text-gray-700' 
+                        : 'border-gray-200 bg-gray-50 text-gray-400 cursor-not-allowed line-through opacity-60'
+                  }`}
+                >
+                  {size}
+                </button>
+              );
+            })}
           </div>
         </div>
       )}

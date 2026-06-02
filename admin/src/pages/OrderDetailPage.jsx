@@ -65,9 +65,13 @@ const OrderDetailPage = () => {
       setDownloadingInvoice(true);
       const response = await adminApi.downloadInvoice(order._id);
       
-      const url = window.URL.createObjectURL(new Blob([response.data], { type: 'text/html' }));
-      window.open(url, '_blank');
-      setTimeout(() => window.URL.revokeObjectURL(url), 1000);
+      const newWindow = window.open('', '_blank');
+      if (newWindow) {
+        newWindow.document.write(response.data);
+        newWindow.document.close();
+      } else {
+        toast.error('Please allow popups to view the invoice.');
+      }
     } catch (error) {
       toast.error('Failed to download invoice.');
     } finally {
@@ -226,10 +230,10 @@ const OrderDetailPage = () => {
           </div>
         )}
 
-        <div className="grid grid-cols-2 gap-4 border-b pb-4 mb-4 text-sm">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 border-b pb-4 mb-4 text-sm">
           <div>
             <span className="text-gray-500 block mb-1">Order ID</span>
-            <span className="font-mono font-medium">{order._id}</span>
+            <span className="font-mono font-medium break-all">{order._id}</span>
           </div>
           <div>
             <span className="text-gray-500 block mb-1">Date</span>

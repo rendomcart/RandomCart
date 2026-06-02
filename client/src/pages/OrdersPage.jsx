@@ -35,10 +35,13 @@ const OrdersPage = () => {
       setDownloadingInvoiceId(orderId);
       const response = await orderApi.downloadInvoice(orderId);
       
-      const url = window.URL.createObjectURL(new Blob([response.data], { type: 'text/html' }));
-      window.open(url, '_blank');
-      // Revoke the object URL after a short delay to free up memory
-      setTimeout(() => window.URL.revokeObjectURL(url), 1000);
+      const newWindow = window.open('', '_blank');
+      if (newWindow) {
+        newWindow.document.write(response.data);
+        newWindow.document.close();
+      } else {
+        toast.error('Please allow popups to view the invoice.');
+      }
     } catch (error) {
       toast.error('Failed to download invoice. Please try again later.');
     } finally {
