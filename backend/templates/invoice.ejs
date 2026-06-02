@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Invoice - <%= order.invoiceNumber %></title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+    
+    body {
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 40px;
+      color: #333;
+      background-color: #fff;
+    }
+    
+    .invoice-container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      border-bottom: 2px solid #eee;
+      padding-bottom: 20px;
+      margin-bottom: 30px;
+    }
+    
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .logo-mark {
+      height: 80px;
+      display: flex;
+      align-items: center;
+    }
+    
+    .logo-mark img {
+      height: 80px;
+      width: auto;
+      object-fit: contain;
+    }
+    
+    .company-name {
+      font-size: 24px;
+      font-weight: 700;
+      color: #111;
+      margin: 0;
+    }
+    
+    .company-details {
+      color: #666;
+      font-size: 12px;
+      line-height: 1.5;
+      margin-top: 5px;
+    }
+    
+    .invoice-title {
+      text-align: right;
+    }
+    
+    .invoice-title h1 {
+      margin: 0 0 5px 0;
+      font-size: 32px;
+      color: #111;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    .invoice-title p {
+      margin: 0;
+      color: #666;
+      font-size: 14px;
+      font-weight: 500;
+    }
+    
+    .billing-info {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 40px;
+    }
+    
+    .billing-col {
+      width: 48%;
+    }
+    
+    .billing-heading {
+      font-size: 12px;
+      text-transform: uppercase;
+      color: #888;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 5px;
+    }
+    
+    .customer-name {
+      font-size: 16px;
+      font-weight: 600;
+      margin: 0 0 5px 0;
+      color: #222;
+    }
+    
+    .customer-details {
+      margin: 0;
+      font-size: 13px;
+      line-height: 1.6;
+      color: #555;
+    }
+    
+    .order-meta {
+      width: 100%;
+      background-color: #f9fafb;
+      border-radius: 6px;
+      padding: 15px;
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 30px;
+    }
+    
+    .meta-item {
+      text-align: center;
+    }
+    
+    .meta-label {
+      font-size: 11px;
+      color: #777;
+      text-transform: uppercase;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    
+    .meta-value {
+      font-size: 13px;
+      font-weight: 600;
+      color: #111;
+    }
+    
+    .items-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 30px;
+    }
+    
+    .items-table th {
+      background-color: #f3f4f6;
+      color: #4b5563;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      padding: 12px;
+      text-align: left;
+    }
+    
+    .items-table th.text-right {
+      text-align: right;
+    }
+    
+    .items-table th.text-center {
+      text-align: center;
+    }
+    
+    .items-table td {
+      padding: 15px 12px;
+      border-bottom: 1px solid #eee;
+      font-size: 13px;
+      vertical-align: middle;
+    }
+    
+    .product-cell {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .product-image {
+      width: 40px;
+      height: 40px;
+      border-radius: 4px;
+      object-fit: cover;
+      background-color: #f9fafb;
+      border: 1px solid #eee;
+    }
+    
+    .product-name {
+      font-weight: 500;
+      color: #222;
+      margin: 0;
+    }
+    
+    .items-table td.text-right {
+      text-align: right;
+      font-weight: 500;
+    }
+    
+    .items-table td.text-center {
+      text-align: center;
+    }
+    
+    .summary-container {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 40px;
+    }
+    
+    .summary-box {
+      width: 300px;
+    }
+    
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      font-size: 13px;
+      color: #555;
+    }
+    
+    .summary-row.total {
+      font-size: 18px;
+      font-weight: 700;
+      color: #111;
+      border-top: 2px solid #eee;
+      padding-top: 12px;
+      margin-top: 4px;
+    }
+    
+    .footer {
+      text-align: center;
+      border-top: 1px solid #eee;
+      padding-top: 20px;
+      color: #777;
+      font-size: 12px;
+    }
+    
+    .footer p {
+      margin: 0 0 5px 0;
+    }
+    
+    .badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    
+    .badge.paid {
+      background-color: #dcfce7;
+      color: #166534;
+    }
+    
+    .badge.unpaid {
+      background-color: #fee2e2;
+      color: #991b1b;
+    }
+  </style>
+</head>
+<body>
+  <div class="invoice-container">
+    
+    <div class="header">
+      <div>
+        <div class="logo-container">
+          <div class="logo-mark"><img src="http://localhost:5173/logo.png" alt="RandomCart" /></div>
+        </div>
+        <div class="company-details">
+          123 Commerce Avenue, Suite 400<br>
+          Tech Park, Bangalore, 560001<br>
+          randomcart@gmail.com | +91 98765 43210<br>
+          GSTIN: 29ABCDE1234F1Z5
+        </div>
+      </div>
+      <div class="invoice-title">
+        <h1>Tax Invoice</h1>
+        <p>Original for Recipient</p>
+      </div>
+    </div>
+    
+    <div class="billing-info">
+      <div class="billing-col">
+        <div class="billing-heading">Billed To</div>
+        <p class="customer-name"><%= order.user.name %></p>
+        <p class="customer-details">
+          <%= order.user.email %><br>
+          <% if (order.user.phone) { %>Phone: <%= order.user.phone %><br><% } %>
+        </p>
+      </div>
+      <div class="billing-col">
+        <div class="billing-heading">Shipped To</div>
+        <p class="customer-name"><%= order.shippingAddress.fullName %></p>
+        <p class="customer-details">
+          <%= order.shippingAddress.address %><br>
+          <%= order.shippingAddress.city %>, <%= order.shippingAddress.state %> - <%= order.shippingAddress.postalCode %><br>
+          <%= order.shippingAddress.country %><br>
+          Phone: <%= order.shippingAddress.phone %>
+        </p>
+      </div>
+    </div>
+    
+    <div class="order-meta">
+      <div class="meta-item">
+        <div class="meta-label">Invoice Number</div>
+        <div class="meta-value"><%= order.invoiceNumber %></div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">Order ID</div>
+        <div class="meta-value">#<%= order._id.toString().slice(-8).toUpperCase() %></div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">Order Date</div>
+        <div class="meta-value"><%= new Date(order.createdAt).toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric' }) %></div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">Payment Method</div>
+        <div class="meta-value">
+          <%= order.paymentMethod %>
+          <% if (order.paymentInfo.status === 'Completed') { %>
+            <span class="badge paid">Paid</span>
+          <% } else { %>
+            <span class="badge unpaid">Unpaid</span>
+          <% } %>
+        </div>
+      </div>
+    </div>
+    
+    <table class="items-table">
+      <thead>
+        <tr>
+          <th>Item Description</th>
+          <th class="text-center">Qty</th>
+          <th class="text-right">Unit Price</th>
+          <th class="text-right">Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% order.orderItems.forEach(function(item) { %>
+          <tr>
+            <td>
+              <div class="product-cell">
+                <% if (item.image) { %>
+                  <img src="<%= formatImgUrl(item.image) %>" alt="<%= item.name %>" class="product-image">
+                <% } else { %>
+                  <div class="product-image"></div>
+                <% } %>
+                <p class="product-name"><%= item.name %></p>
+              </div>
+            </td>
+            <td class="text-center"><%= item.quantity %></td>
+            <td class="text-right">₹<%= (item.price).toFixed(2) %></td>
+            <td class="text-right">₹<%= (item.price * item.quantity).toFixed(2) %></td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+    
+    <div class="summary-container">
+      <div class="summary-box">
+        <div class="summary-row">
+          <span>Subtotal</span>
+          <span>₹<%= order.itemsPrice.toFixed(2) %></span>
+        </div>
+        <div class="summary-row">
+          <span>Shipping Charges</span>
+          <span>₹<%= order.shippingPrice.toFixed(2) %></span>
+        </div>
+        <div class="summary-row">
+          <span>Estimated Tax</span>
+          <span>₹<%= order.taxPrice.toFixed(2) %></span>
+        </div>
+        <div class="summary-row total">
+          <span>Total Amount</span>
+          <span>₹<%= order.totalPrice.toFixed(2) %></span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="footer">
+      <p><strong>Thank you for shopping with RandomCart!</strong></p>
+      <p>If you have any questions concerning this invoice, please contact our customer support.</p>
+      <p style="font-size: 10px; color: #aaa; margin-top: 15px;">This is a computer generated invoice and does not require a physical signature.</p>
+    </div>
+    
+  </div>
+</body>
+</html>
