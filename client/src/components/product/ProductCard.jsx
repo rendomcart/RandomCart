@@ -25,6 +25,19 @@ const ProductCard = ({ product }) => {
     return 0;
   };
 
+  const uniqueColors = [];
+  if (product.variants) {
+    const colorMap = new Map();
+    product.variants.forEach(v => {
+      if (v.color && v.colorHex && !colorMap.has(v.color)) {
+        colorMap.set(v.color, v.colorHex);
+      }
+    });
+    colorMap.forEach((hex, color) => {
+      uniqueColors.push({ color, hex });
+    });
+  }
+
   const toggleWishlist = async (e) => {
     e.preventDefault();
     if (!isAuthenticated) {
@@ -68,6 +81,22 @@ const ProductCard = ({ product }) => {
             {product.name}
           </h3>
         </Link>
+        
+        {uniqueColors.length > 0 && (
+          <div className="flex items-center gap-1 mb-2">
+            {uniqueColors.slice(0, 4).map((c, i) => (
+              <div 
+                key={i} 
+                className="w-3.5 h-3.5 rounded-full border border-gray-300 shadow-sm" 
+                style={{ backgroundColor: c.hex }} 
+                title={c.color}
+              />
+            ))}
+            {uniqueColors.length > 4 && (
+              <span className="text-[10px] text-gray-500 font-medium ml-1">+{uniqueColors.length - 4}</span>
+            )}
+          </div>
+        )}
         
         <div className="mt-auto flex items-center justify-between">
           <span className="font-bold text-lg">
