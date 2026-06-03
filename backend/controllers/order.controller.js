@@ -347,13 +347,7 @@ export const updateOrderStatus = async (req, res, next) => {
     });
 
     try {
-      if (newStatus === 'Shipped') {
-        await sendEmail({
-          to: order.user.email,
-          subject: `Your order has shipped! #${order._id.toString().slice(-6).toUpperCase()}`,
-          html: orderShippedTemplate(order, order.user.name),
-        });
-      } else if (newStatus === 'Delivered') {
+      if (newStatus === 'Delivered') {
         await sendEmail({
           to: order.user.email,
           subject: `Your order has been delivered! #${order._id.toString().slice(-6).toUpperCase()}`,

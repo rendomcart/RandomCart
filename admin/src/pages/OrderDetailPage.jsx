@@ -26,6 +26,12 @@ const OrderDetailPage = () => {
   const [rejecting, setRejecting] = useState(false);
   const { socket } = useSocket();
   const [confirmModal, setConfirmModal] = useState({ isOpen: false });
+  const [currentTime, setCurrentTime] = useState(Date.now());
+
+  useEffect(() => {
+    const timer = setInterval(() => setCurrentTime(Date.now()), 1000);
+    return () => clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     fetchOrder();
@@ -137,14 +143,13 @@ const OrderDetailPage = () => {
   const getRemainingTime = (createdAt) => {
     const createdTime = new Date(createdAt).getTime();
     const deadline = createdTime + 24 * 60 * 60 * 1000;
-    const now = Date.now();
+    if (currentTime >= deadline) return 'Overdue';
     
-    if (now >= deadline) return 'Overdue';
+    const remainingHours = Math.floor((deadline - currentTime) / (1000 * 60 * 60));
+    const remainingMinutes = Math.floor(((deadline - currentTime) % (1000 * 60 * 60)) / (1000 * 60));
+    const remainingSeconds = Math.floor(((deadline - currentTime) % (1000 * 60)) / 1000);
     
-    const remainingHours = Math.floor((deadline - now) / (1000 * 60 * 60));
-    const remainingMinutes = Math.floor(((deadline - now) % (1000 * 60 * 60)) / (1000 * 60));
-    
-    return `${remainingHours}h ${remainingMinutes}m`;
+    return `${remainingHours}h ${remainingMinutes}m ${remainingSeconds}s`;
   };
 
   if (loading) return <div>Loading order...</div>;

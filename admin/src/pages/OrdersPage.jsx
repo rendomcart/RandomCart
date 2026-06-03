@@ -8,6 +8,7 @@ const OrdersPage = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('All');
+  const [currentTime, setCurrentTime] = useState(Date.now());
   const { socket } = useSocket();
 
   useEffect(() => {
@@ -30,6 +31,11 @@ const OrdersPage = () => {
       socket.off('order_rejected', handleOrderUpdate);
     };
   }, [socket]);
+
+  useEffect(() => {
+    const timer = setInterval(() => setCurrentTime(Date.now()), 1000);
+    return () => clearInterval(timer);
+  }, []);
 
   const fetchOrders = async () => {
     try {
@@ -60,14 +66,13 @@ const OrdersPage = () => {
   const getRemainingTime = (createdAt) => {
     const createdTime = new Date(createdAt).getTime();
     const deadline = createdTime + 24 * 60 * 60 * 1000;
-    const now = Date.now();
+    if (currentTime >= deadline) return 'Overdue';
     
-    if (now >= deadline) return 'Overdue';
+    const remainingHours = Math.floor((deadline - currentTime) / (1000 * 60 * 60));
+    const remainingMinutes = Math.floor(((deadline - currentTime) % (1000 * 60 * 60)) / (1000 * 60));
+    const remainingSeconds = Math.floor(((deadline - currentTime) % (1000 * 60)) / 1000);
     
-    const remainingHours = Math.floor((deadline - now) / (1000 * 60 * 60));
-    const remainingMinutes = Math.floor(((deadline - now) % (1000 * 60 * 60)) / (1000 * 60));
-    
-    return `${remainingHours}h ${remainingMinutes}m left`;
+    return `${remainingHours}h ${remainingMinutes}m ${remainingSeconds}s left`;
   };
 
   const filteredOrders = orders.filter(order => {
