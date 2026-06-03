@@ -115,7 +115,7 @@ const AdminLoginPage = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full border p-2.5 pl-10 rounded bg-gray-50 focus:bg-white focus:border-primary outline-none transition-colors" 
-                placeholder="rendomcart@gmail.com"
+                placeholder="admin@randomcart.com"
               />
             </div>
           </div>

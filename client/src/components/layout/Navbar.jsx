@@ -71,6 +71,7 @@ const Navbar = () => {
   const handleLogout = async () => {
     setIsMenuOpen(false);
     await logout();
+    navigate('/');
   };
 
   return (
