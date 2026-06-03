@@ -16,6 +16,15 @@ const ProductCard = ({ product }) => {
   const { isAuthenticated } = useContext(AuthContext);
   const navigate = useNavigate();
 
+  const getPriceToDisplay = () => {
+    if (product.displayPrice) return product.displayPrice;
+    if (product.basePrice) return product.basePrice;
+    if (product.variants && product.variants.length > 0) {
+      return product.variants[0].discountPrice || product.variants[0].price;
+    }
+    return 0;
+  };
+
   const toggleWishlist = async (e) => {
     e.preventDefault();
     if (!isAuthenticated) {
@@ -62,7 +71,7 @@ const ProductCard = ({ product }) => {
         
         <div className="mt-auto flex items-center justify-between">
           <span className="font-bold text-lg">
-            ₹{product.displayPrice || product.basePrice}
+            ₹{getPriceToDisplay()}
           </span>
           <div className="flex items-center text-xs text-gray-500">
             <span className="text-yellow-500 mr-1">★</span>
