@@ -24,18 +24,42 @@ export const NotificationProvider = ({ children }) => {
   useEffect(() => {
     if (!socket) return;
     
+    const handleReceive = (notification) => {
+      fetchNotifications();
+      if (notification && notification.title) {
+        toast(
+          (t) => (
+            <div className="cursor-pointer" onClick={() => toast.dismiss(t.id)}>
+              <p className="font-bold text-sm mb-1">{notification.title}</p>
+              <p className="text-xs text-gray-600 line-clamp-2">{notification.message}</p>
+            </div>
+          ),
+          {
+            duration: 5000,
+            icon: '🔔',
+            style: {
+              background: '#fff',
+              color: '#333',
+              border: '1px solid #e2e8f0',
+              padding: '12px 16px',
+            },
+          }
+        );
+      }
+    };
+
     const handleUpdate = () => {
       fetchNotifications();
     };
 
-    socket.on('receive_notification', handleUpdate);
+    socket.on('receive_notification', handleReceive);
     socket.on('notification_read', handleUpdate);
     socket.on('notification_read_all', handleUpdate);
     socket.on('notification_deleted', handleUpdate);
     socket.on('notification_cleared_all', handleUpdate);
 
     return () => {
-      socket.off('receive_notification', handleUpdate);
+      socket.off('receive_notification', handleReceive);
       socket.off('notification_read', handleUpdate);
       socket.off('notification_read_all', handleUpdate);
       socket.off('notification_deleted', handleUpdate);

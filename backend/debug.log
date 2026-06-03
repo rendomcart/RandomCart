@@ -1,0 +1,62 @@
+2026-06-03T05:16:50.779Z\nError: Refresh token failed
+    at refreshToken (file:///D:/RandomCart/backend/controllers/auth.controller.js:303:10)
+    at Layer.handleRequest (D:\RandomCart\backend\node_modules\router\lib\layer.js:152:17)
+    at next (D:\RandomCart\backend\node_modules\router\lib\route.js:157:13)
+    at Route.dispatch (D:\RandomCart\backend\node_modules\router\lib\route.js:117:3)
+    at handle (D:\RandomCart\backend\node_modules\router\index.js:435:11)
+    at Layer.handleRequest (D:\RandomCart\backend\node_modules\router\lib\layer.js:152:17)
+    at D:\RandomCart\backend\node_modules\router\index.js:295:15
+    at processParams (D:\RandomCart\backend\node_modules\router\index.js:582:12)
+    at next (D:\RandomCart\backend\node_modules\router\index.js:291:5)
+    at Function.handle (D:\RandomCart\backend\node_modules\router\index.js:186:3)\n\n2026-06-03T05:16:50.841Z\nError: Refresh token failed
+    at refreshToken (file:///D:/RandomCart/backend/controllers/auth.controller.js:303:10)
+    at Layer.handleRequest (D:\RandomCart\backend\node_modules\router\lib\layer.js:152:17)
+    at next (D:\RandomCart\backend\node_modules\router\lib\route.js:157:13)
+    at Route.dispatch (D:\RandomCart\backend\node_modules\router\lib\route.js:117:3)
+    at handle (D:\RandomCart\backend\node_modules\router\index.js:435:11)
+    at Layer.handleRequest (D:\RandomCart\backend\node_modules\router\lib\layer.js:152:17)
+    at D:\RandomCart\backend\node_modules\router\index.js:295:15
+    at processParams (D:\RandomCart\backend\node_modules\router\index.js:582:12)
+    at next (D:\RandomCart\backend\node_modules\router\index.js:291:5)
+    at Function.handle (D:\RandomCart\backend\node_modules\router\index.js:186:3)\n\n2026-06-03T05:16:55.434Z\nError: Refresh token failed
+    at refreshToken (file:///D:/RandomCart/backend/controllers/auth.controller.js:303:10)
+    at Layer.handleRequest (D:\RandomCart\backend\node_modules\router\lib\layer.js:152:17)
+    at next (D:\RandomCart\backend\node_modules\router\lib\route.js:157:13)
+    at Route.dispatch (D:\RandomCart\backend\node_modules\router\lib\route.js:117:3)
+    at handle (D:\RandomCart\backend\node_modules\router\index.js:435:11)
+    at Layer.handleRequest (D:\RandomCart\backend\node_modules\router\lib\layer.js:152:17)
+    at D:\RandomCart\backend\node_modules\router\index.js:295:15
+    at processParams (D:\RandomCart\backend\node_modules\router\index.js:582:12)
+    at next (D:\RandomCart\backend\node_modules\router\index.js:291:5)
+    at Function.handle (D:\RandomCart\backend\node_modules\router\index.js:186:3)\n\n2026-06-03T05:16:55.495Z\nError: Refresh token failed
+    at refreshToken (file:///D:/RandomCart/backend/controllers/auth.controller.js:303:10)
+    at Layer.handleRequest (D:\RandomCart\backend\node_modules\router\lib\layer.js:152:17)
+    at next (D:\RandomCart\backend\node_modules\router\lib\route.js:157:13)
+    at Route.dispatch (D:\RandomCart\backend\node_modules\router\lib\route.js:117:3)
+    at handle (D:\RandomCart\backend\node_modules\router\index.js:435:11)
+    at Layer.handleRequest (D:\RandomCart\backend\node_modules\router\lib\layer.js:152:17)
+    at D:\RandomCart\backend\node_modules\router\index.js:295:15
+    at processParams (D:\RandomCart\backend\node_modules\router\index.js:582:12)
+    at next (D:\RandomCart\backend\node_modules\router\index.js:291:5)
+    at Function.handle (D:\RandomCart\backend\node_modules\router\index.js:186:3)\n\n2026-06-03T05:16:55.995Z\nError: Refresh token failed
+    at refreshToken (file:///D:/RandomCart/backend/controllers/auth.controller.js:303:10)
+    at Layer.handleRequest (D:\RandomCart\backend\node_modules\router\lib\layer.js:152:17)
+    at next (D:\RandomCart\backend\node_modules\router\lib\route.js:157:13)
+    at Route.dispatch (D:\RandomCart\backend\node_modules\router\lib\route.js:117:3)
+    at handle (D:\RandomCart\backend\node_modules\router\index.js:435:11)
+    at Layer.handleRequest (D:\RandomCart\backend\node_modules\router\lib\layer.js:152:17)
+    at D:\RandomCart\backend\node_modules\router\index.js:295:15
+    at processParams (D:\RandomCart\backend\node_modules\router\index.js:582:12)
+    at next (D:\RandomCart\backend\node_modules\router\index.js:291:5)
+    at Function.handle (D:\RandomCart\backend\node_modules\router\index.js:186:3)\n\n2026-06-03T05:16:55.998Z\nError: Refresh token failed
+    at refreshToken (file:///D:/RandomCart/backend/controllers/auth.controller.js:303:10)
+    at Layer.handleRequest (D:\RandomCart\backend\node_modules\router\lib\layer.js:152:17)
+    at next (D:\RandomCart\backend\node_modules\router\lib\route.js:157:13)
+    at Route.dispatch (D:\RandomCart\backend\node_modules\router\lib\route.js:117:3)
+    at handle (D:\RandomCart\backend\node_modules\router\index.js:435:11)
+    at Layer.handleRequest (D:\RandomCart\backend\node_modules\router\lib\layer.js:152:17)
+    at D:\RandomCart\backend\node_modules\router\index.js:295:15
+    at processParams (D:\RandomCart\backend\node_modules\router\index.js:582:12)
+    at next (D:\RandomCart\backend\node_modules\router\index.js:291:5)
+    at Function.handle (D:\RandomCart\backend\node_modules\router\index.js:186:3)\n\n2026-06-03T05:17:15.002Z\nError: Invalid email or password
+    at loginUser (file:///D:/RandomCart/backend/controllers/auth.controller.js:239:13)\n\n

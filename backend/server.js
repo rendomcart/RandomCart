@@ -8,7 +8,7 @@ import { fileURLToPath } from 'url';
 import connectDB from './config/db.js';
 import { initializeSocket } from './config/socket.js';
 import { errorHandler } from './middlewares/error.middleware.js';
-import initOrderEscalationCron from './cron/orderEscalation.js';
+import initWorkflowCron from './cron/workflowCron.js';
 import Review from './models/Review.model.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -43,7 +43,7 @@ connectDB();
 initializeSocket(httpServer);
 
 // Initialize Cron Jobs
-initOrderEscalationCron();
+initWorkflowCron();
 
 // Middlewares
 app.use(express.json());

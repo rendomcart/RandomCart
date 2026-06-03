@@ -53,11 +53,17 @@ export const createOrder = async (req, res, next) => {
     const finalTotalPrice = Number(totalPrice);
     
     const now = new Date();
-    const estimatedShipDate = new Date(now);
-    estimatedShipDate.setDate(now.getDate() + (isExpress ? 1 : 2));
-    
-    const estimatedDeliveryDate = new Date(now);
-    estimatedDeliveryDate.setDate(now.getDate() + (isExpress ? 3 : 7));
+    const expectedProcessing = new Date(now);
+    expectedProcessing.setDate(expectedProcessing.getDate() + 1);
+
+    const expectedShipped = new Date(now);
+    expectedShipped.setDate(expectedShipped.getDate() + 2);
+
+    const expectedOutForDelivery = new Date(now);
+    expectedOutForDelivery.setDate(expectedOutForDelivery.getDate() + (isExpress ? 3 : 5));
+
+    const expectedDelivered = new Date(now);
+    expectedDelivered.setDate(expectedDelivered.getDate() + (isExpress ? 3 : 7));
 
     // 1. Create the order (Pending Payment)
     const order = new Order({
@@ -71,9 +77,15 @@ export const createOrder = async (req, res, next) => {
       totalPrice: finalTotalPrice,
       deliveryType: isExpress ? 'Express' : 'Standard',
       deliveryCharge,
-      estimatedShipDate,
-      estimatedDeliveryDate,
-      timeline: [{ status: 'Pending Approval' }],
+      estimatedShipDate: expectedShipped,
+      estimatedDeliveryDate: expectedDelivered,
+      expectedDates: {
+        processing: expectedProcessing,
+        shipped: expectedShipped,
+        outForDelivery: expectedOutForDelivery,
+        delivered: expectedDelivered
+      },
+      timeline: [{ status: 'Pending Approval', updatedBy: 'User', comment: 'Order placed by user' }],
       paymentInfo: {
         status: paymentMethod === 'COD' ? 'Pending' : 'Pending'
       }
@@ -226,48 +238,78 @@ export const updateOrderStatus = async (req, res, next) => {
     }
 
     const newStatus = req.body.status || order.orderStatus;
+    const now = new Date();
     
     // Strict Progression Rule
-    const flowStatuses = ['Pending Approval', 'Overdue Review', 'Approved', 'Processing', 'Shipped', 'Delivered'];
+    const flowStatuses = ['Pending Approval', 'Processing', 'Shipped', 'Out for Delivery', 'Delivered'];
     if (flowStatuses.includes(newStatus) && flowStatuses.includes(order.orderStatus)) {
       const currentIdx = flowStatuses.indexOf(order.orderStatus);
       const newIdx = flowStatuses.indexOf(newStatus);
       
-      // Allow moving from Overdue Review back to Approved
-      if (newIdx < currentIdx && !(order.orderStatus === 'Overdue Review' && newStatus === 'Approved')) {
+      if (newIdx < currentIdx) {
         res.status(400);
         throw new Error(`Cannot revert order status from ${order.orderStatus} back to ${newStatus}`);
       }
     }
 
-    order.orderStatus = newStatus;
-    
-    // Initialize timeline if it doesn't exist (for old orders)
-    if (!order.timeline) {
-      order.timeline = [];
-    }
-    
-    // Add to timeline
-    order.timeline.push({ 
-      status: newStatus, 
-      comment: req.body.comment || `Order marked as ${newStatus}` 
-    });
-    
-    if (req.body.status === 'Shipped') {
-      if (!order.actualShipDate) order.actualShipDate = Date.now();
-    }
-
-    if (req.body.status === 'Delivered') {
-      order.deliveredAt = Date.now();
-      if (!order.actualDeliveryDate) order.actualDeliveryDate = Date.now();
-      // If COD and delivered, mark payment as completed
-      if (order.paymentMethod === 'COD' && order.paymentInfo.status !== 'Completed') {
-        order.paymentInfo.status = 'Completed';
+    if (newStatus !== order.orderStatus) {
+      if (order.expectedDates && flowStatuses.includes(newStatus)) {
+        const statusKeyMap = {
+          'Processing': 'processing',
+          'Shipped': 'shipped',
+          'Out for Delivery': 'outForDelivery',
+          'Delivered': 'delivered'
+        };
+        
+        const currentKey = statusKeyMap[newStatus];
+        if (currentKey && order.expectedDates[currentKey]) {
+          const oldExpected = new Date(order.expectedDates[currentKey]);
+          const diffMs = now.getTime() - oldExpected.getTime();
+          
+          const currentIdx = flowStatuses.indexOf(newStatus);
+          for (let i = currentIdx + 1; i < flowStatuses.length; i++) {
+            const futureStatus = flowStatuses[i];
+            const futureKey = statusKeyMap[futureStatus];
+            if (futureKey && order.expectedDates[futureKey]) {
+              const oldFutureExpected = new Date(order.expectedDates[futureKey]);
+              const newFutureExpected = new Date(oldFutureExpected.getTime() + diffMs);
+              order.expectedDates[futureKey] = newFutureExpected;
+              
+              if (futureKey === 'shipped') order.estimatedShipDate = newFutureExpected;
+              if (futureKey === 'delivered') order.estimatedDeliveryDate = newFutureExpected;
+            }
+          }
+          
+          order.expectedDates[currentKey] = now;
+        }
       }
-      // Generate Invoice Number if it doesn't exist
-      if (!order.invoiceNumber) {
-        const randomStr = Math.random().toString(36).substring(2, 7).toUpperCase();
-        order.invoiceNumber = `INV-${order._id.toString().slice(-6).toUpperCase()}-${randomStr}`;
+
+      order.orderStatus = newStatus;
+      
+      if (!order.timeline) order.timeline = [];
+      
+      const updatedBy = req.body.updatedBy || 'Admin';
+      
+      order.timeline.push({ 
+        status: newStatus, 
+        comment: req.body.comment || `Order marked as ${newStatus}`,
+        updatedBy: updatedBy
+      });
+      
+      if (newStatus === 'Shipped') {
+        order.actualShipDate = now;
+      }
+
+      if (newStatus === 'Delivered') {
+        order.deliveredAt = now;
+        order.actualDeliveryDate = now;
+        if (order.paymentMethod === 'COD' && order.paymentInfo.status !== 'Completed') {
+          order.paymentInfo.status = 'Completed';
+        }
+        if (!order.invoiceNumber) {
+          const randomStr = Math.random().toString(36).substring(2, 7).toUpperCase();
+          order.invoiceNumber = `INV-${order._id.toString().slice(-6).toUpperCase()}-${randomStr}`;
+        }
       }
     }
 

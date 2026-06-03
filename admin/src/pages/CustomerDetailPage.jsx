@@ -41,7 +41,7 @@ const CustomerDetailPage = () => {
         <Link to="/customers" className="text-primary hover:underline">← Back to Customers</Link>
       </div>
 
-      <div className="bg-white p-6 rounded shadow-sm mb-6 flex items-start gap-6">
+      <div className="bg-white p-4 sm:p-6 rounded shadow-sm mb-6 flex items-start gap-6">
         <div className="w-24 h-24 bg-gray-200 rounded-full overflow-hidden flex-shrink-0">
           {customer.avatar?.url ? (
             <img src={formatImgUrl(customer.avatar.url)} alt={customer.name} className="w-full h-full object-cover" />

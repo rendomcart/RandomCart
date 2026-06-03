@@ -59,7 +59,7 @@ const orderSchema = new mongoose.Schema({
   orderStatus: {
     type: String,
     required: true,
-    enum: ['Pending Approval', 'Overdue Review', 'Approved', 'Processing', 'Shipped', 'Delivered', 'Cancelled', 'Returned', 'Rejected'],
+    enum: ['Pending Approval', 'Overdue Review', 'Approved', 'Processing', 'Shipped', 'Out for Delivery', 'Delivered', 'Cancelled', 'Returned', 'Rejected'],
     default: 'Pending Approval',
   },
   deliveryType: {
@@ -72,11 +72,22 @@ const orderSchema = new mongoose.Schema({
   estimatedDeliveryDate: { type: Date },
   actualShipDate: { type: Date },
   actualDeliveryDate: { type: Date },
+  expectedDates: {
+    processing: { type: Date },
+    shipped: { type: Date },
+    outForDelivery: { type: Date },
+    delivered: { type: Date }
+  },
+  workflowFlags: {
+    autoApproved: { type: Boolean, default: false },
+    autoApprovalDate: { type: Date }
+  },
   timeline: [
     {
       status: { type: String, required: true },
       date: { type: Date, default: Date.now },
-      comment: { type: String }
+      comment: { type: String },
+      updatedBy: { type: String, enum: ['System', 'Admin', 'User'], default: 'User' }
     }
   ],
   deliveredAt: { type: Date },

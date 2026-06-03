@@ -228,7 +228,7 @@ const DashboardPage = () => {
         
         {/* Recent Orders */}
         <div className="lg:col-span-2 bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden">
-          <h3 className="text-lg font-bold text-gray-800 mb-4 p-6 pb-0">Recent Orders</h3>
+          <h3 className="text-lg font-bold text-gray-800 mb-4 p-4 sm:p-6 pb-0">Recent Orders</h3>
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse min-w-[800px]">
               <thead>

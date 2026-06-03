@@ -73,7 +73,7 @@ const ProductsPage = () => {
         </button>
       </div>
       
-      <div className="bg-white shadow-sm rounded overflow-x-auto">
+      <div className="p-4 sm:p-6 bg-white shadow-sm rounded overflow-x-auto">
         <table className="w-full text-left text-sm min-w-[800px]">
           <thead className="bg-background text-text-main">
             <tr>

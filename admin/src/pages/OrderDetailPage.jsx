@@ -204,7 +204,7 @@ const OrderDetailPage = () => {
         <Link to="/orders" className="text-primary hover:underline">← Back to Orders</Link>
       </div>
 
-      <div className="bg-white p-6 rounded shadow-sm mb-6">
+      <div className="bg-white p-4 sm:p-6 rounded shadow-sm mb-6">
         
         {/* Header Alert for Pending/Overdue */}
         {isPendingReview && (
@@ -356,7 +356,7 @@ const OrderDetailPage = () => {
         </div>
       </div>
 
-      <div className="bg-white p-6 rounded shadow-sm">
+      <div className="bg-white p-4 sm:p-6 rounded shadow-sm">
         <h3 className="font-bold mb-4">Order Items ({order.orderItems.length})</h3>
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm mb-6 min-w-[600px]">

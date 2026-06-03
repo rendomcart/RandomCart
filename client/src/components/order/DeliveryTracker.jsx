@@ -7,15 +7,13 @@ const DeliveryTracker = ({ order }) => {
     orderStatus,
     deliveryType = 'Standard',
     deliveryCharge = 0,
-    estimatedShipDate,
-    estimatedDeliveryDate,
-    actualShipDate,
-    actualDeliveryDate,
+    expectedDates = {},
     timeline = [],
+    workflowFlags = {}
   } = order;
 
   // Determine current progress
-  const flowStatuses = ['Pending Approval', 'Approved', 'Processing', 'Shipped', 'Delivered'];
+  const flowStatuses = ['Pending Approval', 'Processing', 'Shipped', 'Out for Delivery', 'Delivered'];
   
   // Handle edge cases
   if (['Cancelled', 'Returned', 'Rejected'].includes(orderStatus)) {
@@ -28,7 +26,6 @@ const DeliveryTracker = ({ order }) => {
   }
 
   let currentIndex = flowStatuses.indexOf(orderStatus);
-  // Default to 0 if unknown but not cancelled
   if (currentIndex === -1) {
     if (orderStatus === 'Overdue Review') currentIndex = 0;
     else currentIndex = 1;
@@ -40,10 +37,10 @@ const DeliveryTracker = ({ order }) => {
   const now = new Date();
   let remainingText = '';
   
-  if (orderStatus === 'Delivered' && actualDeliveryDate) {
-    remainingText = `Delivered Successfully on: ${new Date(actualDeliveryDate).toLocaleDateString()}`;
-  } else if (estimatedDeliveryDate) {
-    const estDate = new Date(estimatedDeliveryDate);
+  if (orderStatus === 'Delivered' && expectedDates.delivered) {
+    remainingText = `Delivered Successfully on: ${new Date(order.actualDeliveryDate || expectedDates.delivered).toLocaleDateString()}`;
+  } else if (expectedDates.delivered) {
+    const estDate = new Date(expectedDates.delivered);
     const diffTime = estDate - now;
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     
@@ -67,6 +64,11 @@ const DeliveryTracker = ({ order }) => {
             <span className={`text-xs px-2 py-1 rounded font-bold ${deliveryCharge > 0 ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800'}`}>
               {deliveryCharge > 0 ? `₹${deliveryCharge}` : 'Free'}
             </span>
+            {workflowFlags?.autoApproved && (
+              <span className="text-xs px-2 py-1 rounded font-bold bg-purple-100 text-purple-800 ml-2">
+                Auto-Approved
+              </span>
+            )}
           </div>
         </div>
         
@@ -75,8 +77,8 @@ const DeliveryTracker = ({ order }) => {
           <div className="font-bold text-lg text-primary">
             {orderStatus === 'Delivered' ? (
               <span className="text-green-600">Delivered</span>
-            ) : estimatedDeliveryDate ? (
-              new Date(estimatedDeliveryDate).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })
+            ) : expectedDates.delivered ? (
+              new Date(expectedDates.delivered).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })
             ) : (
               'Pending'
             )}
@@ -109,19 +111,21 @@ const DeliveryTracker = ({ order }) => {
               const isCurrent = index === currentIndex;
               const event = timeline.find(t => t.status === status);
               
-              // Determine which date to show below the step
               let displayDate = null;
-              if (status === 'Pending Approval' || status === 'Approved') {
-                 displayDate = event ? new Date(event.date) : new Date(order.createdAt);
-              } else if (status === 'Shipped') {
-                 displayDate = actualShipDate ? new Date(actualShipDate) : (estimatedShipDate ? new Date(estimatedShipDate) : null);
-              } else if (status === 'Delivered') {
-                 displayDate = actualDeliveryDate ? new Date(actualDeliveryDate) : (estimatedDeliveryDate ? new Date(estimatedDeliveryDate) : null);
-              } else if (event) {
-                 displayDate = new Date(event.date);
-              }
+              let isActual = !!event;
 
-              const isActualDate = (status === 'Shipped' && actualShipDate) || (status === 'Delivered' && actualDeliveryDate) || (status !== 'Shipped' && status !== 'Delivered' && event);
+              if (status === 'Pending Approval') {
+                 displayDate = new Date(order.createdAt);
+                 isActual = true;
+              } else if (status === 'Processing') {
+                 displayDate = event ? new Date(event.date) : (expectedDates.processing ? new Date(expectedDates.processing) : null);
+              } else if (status === 'Shipped') {
+                 displayDate = event ? new Date(event.date) : (expectedDates.shipped ? new Date(expectedDates.shipped) : null);
+              } else if (status === 'Out for Delivery') {
+                 displayDate = event ? new Date(event.date) : (expectedDates.outForDelivery ? new Date(expectedDates.outForDelivery) : null);
+              } else if (status === 'Delivered') {
+                 displayDate = event ? new Date(event.date) : (expectedDates.delivered ? new Date(expectedDates.delivered) : null);
+              }
 
               return (
                 <div key={status} className="flex flex-col items-center flex-1 relative z-10 px-1">
@@ -140,10 +144,19 @@ const DeliveryTracker = ({ order }) => {
                   
                   {displayDate && (
                     <div className="mt-1 flex flex-col items-center text-center">
-                      <span className={`text-[8px] sm:text-[10px] leading-tight ${isActualDate ? 'text-gray-600 font-medium' : 'text-gray-400 italic'}`}>
+                      <span className={`text-[8px] sm:text-[10px] leading-tight ${isActual ? 'text-gray-600 font-medium' : 'text-gray-400 italic'}`}>
                         {displayDate.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
                       </span>
-                      {!isActualDate && <span className="text-[9px] text-orange-400 uppercase tracking-wider">Est.</span>}
+                      {!isActual && <span className="text-[9px] text-orange-400 uppercase tracking-wider">Est.</span>}
+                    </div>
+                  )}
+
+                  {/* Badges for Auto or Admin Update */}
+                  {event && event.updatedBy && status !== 'Pending Approval' && (
+                    <div className="mt-1 text-center">
+                      <span className={`text-[8px] px-1 py-0.5 rounded ${event.updatedBy === 'System' ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700'}`}>
+                        By {event.updatedBy}
+                      </span>
                     </div>
                   )}
                 </div>

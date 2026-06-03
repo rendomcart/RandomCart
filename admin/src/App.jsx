@@ -17,7 +17,7 @@ import Sidebar from './components/layout/Sidebar';
 import AdminLoginPage from './pages/AdminLoginPage';
 import AdminProfilePage from './pages/AdminProfilePage';
 import NotFoundPage from './pages/NotFoundPage';
-import Chatbot from './components/chatbot/Chatbot';
+
 import { useSocket } from './context/SocketContext';
 import { useState, useEffect, useContext } from 'react';
 import { Bell } from 'lucide-react';
@@ -106,7 +106,7 @@ const AppLayout = () => {
         </header>
 
         {/* Main Content Area */}
-        <div className="flex-grow p-8 overflow-y-auto">
+        <div className="flex-grow p-4 md:p-8 overflow-y-auto w-full box-border">
           <Routes>
             <Route path="/" element={<DashboardPage />} />
             <Route path="/categories" element={<CategoriesPage />} />
@@ -126,7 +126,7 @@ const AppLayout = () => {
           </Routes>
         </div>
       </main>
-      <Chatbot />
+
       <Toaster position="top-right" />
     </div>
   );
